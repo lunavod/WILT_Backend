@@ -1,0 +1,18 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  login: TestOne
+  email: test@test.test
+  birthday: 2018-11-18
+  about: MyText
+  password_salt: ae0a7034d448258dccb61bb9f6383f56
+  password: 675a42ba48967f43e9b30400aefc0c71b31d76b384a073514d207fe924412cb5
+
+two:
+  login: TestTwo
+  email: test_two@test.test
+  birthday: 2018-11-18
+  about: MyText
+  password_salt: 441b0657ea6cfd0c50c853cb4bea6e74
+  password: 5b68b803458a1d4084c8137d70349eebc763ebb2dee66c22c56c73b6f6a5d9a6
+
