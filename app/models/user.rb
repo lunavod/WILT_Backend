@@ -4,6 +4,7 @@ require 'securerandom'
 class User < ApplicationRecord
   include ActiveModel::Serializers::JSON
   include Rails.application.routes.url_helpers
+  require 'sanitize'
 
   has_one_attached :avatar
 
@@ -60,6 +61,17 @@ class User < ApplicationRecord
 
   def sanitize_description
     sanitizer = Rails::Html::SafeListSanitizer.new
-    self.description = sanitizer.sanitize(self.description, tags: %w(b, u, s, h1, h2, blockquote, span, a), attributes: %w(href, class, target))
+    self.description = Sanitize.fragment(self.description,
+      :elements => ['blockquote', 'span', 'b', 'u', 's', 'i', 'a', 'h1', 'h2'],
+
+      :attributes => {
+        'a'    => ['href', 'title'],
+        'span' => ['class']
+      },
+
+      :protocols => {
+        'a' => {'href' => ['http', 'https', 'mailto']}
+      }
+    )
   end
 end
