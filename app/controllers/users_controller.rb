@@ -8,11 +8,35 @@ class UsersController < ApplicationController
   def show
     return unless set_user
 
-    api_render result: { user: @user }
+    user_object = @user.as_json
+
+    if @user === @user_current
+      user_object = user_object.merge({invites: @user.invites})
+    end
+
+    api_render result: { user: user_object }
   end
 
   def create
-    @user = User.new(user_params)
+    @user = User.new(user_params.except(:invite_code))
+
+    unless user_params['invite_code']
+      return api_render errors: {invite: ['is invalid']}, code: 400, status: false
+    end
+
+    @invite = Invite.find_by(code: user_params['invite_code'])
+
+    unless @invite
+      return api_render errors: {invite: ['is invalid']}, code: 400, status: false
+    end
+
+    if @invite.user
+      return api_render errors: {invite: ['is invalid']}, code: 400, status: false
+    end
+
+    @invite.user = @user
+    @invite.save
+
     unless @user.save
       return api_render errors: @user.errors, status: false, code: 400
     end
@@ -51,9 +75,9 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params[:user] ||= { username: nil, password: nil, email: nil, description: nil, original_description: nil, avatar: nil }
+    params[:user] ||= { username: nil, password: nil, email: nil, description: nil, original_description: nil, avatar: nil, invite_code: nil }
 
-    params.require(:user).permit(:username, :password, :email, :description, :original_description, :avatar)
+    params.require(:user).permit(:username, :password, :email, :description, :original_description, :avatar, :invite_code)
   end
 
   def set_user

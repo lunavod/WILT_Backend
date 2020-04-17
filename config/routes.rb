@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :invites, only: [:create]
   resources :sessions
   resources :users
   resources :posts

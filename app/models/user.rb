@@ -11,6 +11,9 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :delete_all
   has_many :posts, class_name: 'Post', foreign_key: 'creator_id', dependent: :delete_all
 
+  has_many :invites, class_name: 'Invite', foreign_key: 'creator_id'
+  has_one :invite, class_name: 'Invite', foreign_key: 'user_id'
+
   validates :username, presence: true, length: {
     in: 3..20
   }, format: { with: /\A[a-zA-Z0-9_\-\.]+\z/ }, uniqueness: true
