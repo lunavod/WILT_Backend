@@ -1,14 +1,28 @@
 class PostsController < ApplicationController
-    before_action :require_login, only: [:create, :destroy]
+    before_action :require_login, only: [:create, :update, :destroy]
     def index
-        @posts = Post.all
-        render json: { posts: @posts }
+        puts '===================================================================================='
+        puts params
+        puts pagination_params
+
+        offset = Post.where("id >= ?", pagination_params[:cursor]).count
+        total = Post.count
+        limit = pagination_params[:limit]
+
+        @posts = Post.where("id < ?", pagination_params[:cursor]).limit(pagination_params[:limit])
+
+        api_render result: { posts: @posts, pagination: { offset: offset, limit: limit, total: total, next_cursor: @posts[-1].id} }
     end
 
     def user_index
         return unless set_user
-        @posts = Post.where(creator_id: @user.id)
+        @posts = Post.where("created_at > ? AND creator_id = ?", pagination_params[:cursor], @user.id).limit(pagination_params[:limit])
         api_render result: {posts: @posts}
+    end
+
+    def show
+        return unless set_post
+        api_render result: {post: @post}
     end
 
     def create
@@ -43,6 +57,15 @@ class PostsController < ApplicationController
     private
     def post_params
         params.require(:post).permit(:title, :text, :original_text)
+    end
+
+    def pagination_params
+        # return {cursor: Post.all[0].id+1, limit: 10} unless params[:pagination] 
+        params[:pagination] ||= {cursor: Post.all[0].id+1, limit: 10}
+        params[:pagination][:cursor] ||= Post.all[0].id+1
+        params[:pagination][:limit] ||= 10
+
+        params.require(:pagination).permit(:cursor, :limit)
     end
 
     def set_user

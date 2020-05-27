@@ -59,13 +59,13 @@ class User < ApplicationRecord
   end
 
   def attributes
-    {'username' => nil, 'email' => nil, 'id' => nil, 'created_at' => nil, 'description' => nil, 'original_description' => nil, 'avatar_url' => nil}
+    {'username' => nil, 'email' => nil, 'id' => nil, 'created_at' => nil, 'description' => nil, 'original_description' => nil, }#'avatar_url' => nil}
   end
 
   def sanitize_description
     sanitizer = Rails::Html::SafeListSanitizer.new
     self.description = Sanitize.fragment(self.description,
-      :elements => ['blockquote', 'span', 'b', 'u', 's', 'i', 'a', 'h1', 'h2'],
+      :elements => ['blockquote', 'span', 'b', 'u', 's', 'i', 'a', 'h1', 'h2', 'br'],
 
       :attributes => {
         'a'    => ['href', 'title'],

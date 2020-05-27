@@ -42,3 +42,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'rack-cors'
 gem 'image_processing', '~> 1.2'
 gem 'sanitize'
+gem 'active_storage_silent_logs', group: :development
+gem 'fabrication'
+gem 'faker'

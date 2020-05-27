@@ -27,7 +27,7 @@ class ApplicationController < ActionController::API
 
   def check_user_current
     @user_current = nil
-    @session_current = Session.find_by_key(params[:api_key])
+    @session_current = Session.find_by_key(request.headers["X-Authorization-Bearer"])
     unless @session_current
       return
     end

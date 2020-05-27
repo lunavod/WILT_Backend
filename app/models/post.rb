@@ -15,7 +15,7 @@ class Post < ApplicationRecord
   def sanitize_text
     sanitizer = Rails::Html::SafeListSanitizer.new
     self.text = Sanitize.fragment(self.text,
-      :elements => ['blockquote', 'span', 'b', 'u', 's', 'i', 'a', 'h1', 'h2'],
+      :elements => ['blockquote', 'span', 'b', 'u', 's', 'i', 'a', 'h1', 'h2', 'br'],
 
       :attributes => {
         'a'    => ['href', 'title'],
